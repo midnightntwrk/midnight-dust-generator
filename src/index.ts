@@ -90,12 +90,19 @@ const CONFIG = {
 };
 
 
-// ─── Helper: Format raw balance to human-readable ──────────────────────────────
-// Midnight balances use 6 decimal places. A raw value of 1,000,000,000 equals 1,000.000000 tokens.
+// ─── Helpers: Format raw balances to human-readable ────────────────────────────
+// NIGHT is divided into 10^6 STAR. A raw value of 1,000,000,000 equals 1,000.000000 tNight.
+// DUST is divided into 10^15 SPECK, so it uses a more granular decimal representation.
 
-const formatBalance = (raw: bigint): string => {
+const formatNight = (raw: bigint): string => {
   const whole = raw / 1_000_000n;
   const fraction = (raw % 1_000_000n).toString().padStart(6, '0');
+  return `${whole.toLocaleString()}.${fraction}`;
+};
+
+const formatDust = (raw: bigint): string => {
+  const whole = raw / 1_000_000_000_000_000n;
+  const fraction = (raw % 1_000_000_000_000_000n).toString().padStart(15, '0');
   return `${whole.toLocaleString()}.${fraction}`;
 };
 
@@ -273,7 +280,7 @@ const registerForDustGeneration = async (
   // Check: Do we already have DUST from a previous session?
   if (state.dust.availableCoins.length > 0) {
     const dustBalance = state.dust.walletBalance(new Date());
-    console.log(`  DUST already available: ${formatBalance(dustBalance)}\n`);
+    console.log(`  DUST already available: ${formatDust(dustBalance)}\n`);
     return;
   }
 
@@ -378,9 +385,9 @@ const main = async () => {
     console.log('  Waiting for tNight — copy the unshielded address above and paste it into the faucet.');
     console.log('  ⚠️  Make sure you copy only the address with no extra spaces.\n');
     const balance = await withStatus('Waiting for incoming tNight', () => waitForFunds(wallet));
-    console.log(`  Balance: ${formatBalance(balance)} tNight\n`);
+    console.log(`  Balance: ${formatNight(balance)} tNight\n`);
   } else {
-    console.log(`  Balance: ${formatBalance(currentBalance)} tNight\n`);
+    console.log(`  Balance: ${formatNight(currentBalance)} tNight\n`);
   }
 
   // 8. Register NIGHT for DUST generation
@@ -389,7 +396,7 @@ await registerForDustGeneration(wallet, unshieldedKeystore, targetDustAddress);
   // 9. Show DUST balance
   const dustBalance = await checkDustBalance(wallet);
   console.log('');
-  console.log(`  DUST Balance: ${formatBalance(dustBalance)}`);
+  console.log(`  DUST Balance: ${formatDust(dustBalance)}`);
   console.log('  DUST generates continuously over time.');
   console.log('  Press Enter to re-check, or type "q" to quit.\n');
 
@@ -402,7 +409,7 @@ await registerForDustGeneration(wallet, unshieldedKeystore, targetDustAddress);
     } else {
       const updated = await checkDustBalance(wallet);
       const time = new Date().toLocaleTimeString();
-      console.log(`  [${time}] DUST Balance: ${formatBalance(updated)}\n`);
+      console.log(`  [${time}] DUST Balance: ${formatDust(updated)}\n`);
     }
   }
 
