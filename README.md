@@ -1,72 +1,121 @@
-# Midnight Template Repository
+# Midnight DUST Generator
 
-This GitHub repository should be used as a template when creating a new Midnight GitHub repository.
-The template is configured with default repository settings and a set of default files that are expected to exist in all Midnight GitHub repositories.
+Generate DUST tokens programmatically on the Midnight Preprod network.
 
-### LICENSE
+DUST is the non-transferable resource used to pay transaction fees on Midnight. Unlike Testnet-02 where DUST was available directly from the faucet, Preprod requires you to hold tNIGHT tokens and register them for DUST generation — the same flow used on Mainnet.
 
-Apache 2.0.
+This script handles the full process: creating or restoring a wallet, funding it with tNIGHT from the faucet, designating a dust address, and registering your tokens to start generating DUST.
 
-### README.md
+## Prerequisites
 
-Provides a brief description for users and developers who want to understand the purpose, setup, and usage of the repository.
+Midnight development is supported on **macOS and Linux only**.
 
-### SECURITY.md
+- [Node.js](https://nodejs.org/) v18 or later
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — runs the proof server locally
 
-Provides a brief description of the Midnight Foundation's security policy and how to properly disclose security issues.
+```bash
+node --version    # v18.x.x or higher
+npm --version     # 9.x.x or higher
+docker --version  # Docker version 2x.x.x or higher
+```
 
-### CONTRIBUTING.md
+## Quick Start
 
-Provides guidelines for how people can contribute to the Midnight project.
+### 1. Install dependencies
 
-### CODEOWNERS
+```bash
+npm install
+```
 
-Defines repository ownership rules.
+### 2. Start the proof server
 
-### ISSUE_TEMPLATE
+Open a second terminal and run:
 
-Provides templates for reporting various types of issues, such as: bug report, documentation improvement and feature request.
+```bash
+docker compose -f proof-server.yml up
+```
 
-### PULL_REQUEST_TEMPLATE
+Wait for `listening on: 0.0.0.0:6300` before continuing.
 
-Provides a template for a pull request.
+> **Mac ARM (Apple Silicon) users:** If the proof server hangs, open Docker Desktop → Settings → General → Virtual Machine Options → select **Docker VMM**. Restart Docker and try again.
 
-### CLA Assistant
+### 3. Run the script
 
-The Midnight Foundation appreciates contributions, and like many other open source projects asks contributors to sign a contributor
-License Agreement before accepting contributions. We use CLA assistant (https://github.com/cla-assistant/cla-assistant) to streamline the CLA
-signing process, enabling contributors to sign our CLAs directly within a GitHub pull request.
+```bash
+npm start
+```
 
-### Dependabot
+The script walks you through each step interactively:
 
-The Midnight Foundation uses GitHub Dependabot feature to keep our projects dependencies up-to-date and address potential security vulnerabilities.
+```
+  Create a new wallet or restore an existing one? (n/r): n
 
-### Checkmarx
+  Created new wallet.
+  ⚠️  Save this seed — it is the ONLY way to restore your wallet:
 
-The Midnight Foundation uses Checkmarx for application security (AppSec) to identify and fix security vulnerabilities.
-All repositories are scanned with Checkmarx's suite of tools including: Static Application Security Testing (SAST), Infrastructure as Code (IaC), Software Composition Analysis (SCA), API Security, Container Security and Supply Chain Scans (SCS).
+  a1b2c3d4e5f6...
 
-### Unito
+  ✅ Building wallet
 
-Facilitates two-way data synchronization, automated workflows and streamline processes between: Jira, GitHub issues and Github project Kanban board.
+  Wallet Addresses:
+    Shielded:    mn_shield-addr_preprod1q...
+    Unshielded:  mn_addr_preprod1q...  ← send tNight here
+    Dust:        mn_dust_preprod1w...
 
-# TODO - New Repo Owner
+  Faucet: https://faucet.preprod.midnight.network
 
-### Software Package Data Exchange (SPDX)
-Include the following Software Package Data Exchange (SPDX) short-form identifier in a comment at the top headers of each source code file.
+  Dust address to designate:
+```
 
+### 4. Fund the wallet
 
- <I>// This file is part of <B>REPLACE WITH REPO-NAME</B>.<BR>
- // Copyright (C) 2025 Midnight Foundation<BR>
- // SPDX-License-Identifier: Apache-2.0<BR>
- // Licensed under the Apache License, Version 2.0 (the "License");<BR>
- // You may not use this file except in compliance with the License.<BR>
- // You may obtain a copy of the License at<BR>
- //<BR>
- //	https://www.apache.org/licenses/LICENSE-2.0<BR>
- //<BR>
- // Unless required by applicable law or agreed to in writing, software<BR>
- // distributed under the License is distributed on an "AS IS" BASIS,<BR>
- // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<BR>
- // See the License for the specific language governing permissions and<BR>
- // limitations under the License.</I>
+1. Copy the **unshielded address** — make sure there are no extra spaces
+2. Open the [Preprod faucet](https://faucet.preprod.midnight.network)
+3. Paste the address and request tNIGHT tokens
+4. The script detects incoming funds automatically
+
+### 5. Generate DUST
+
+Once funded, the script registers your tNIGHT and begins generating DUST:
+
+```
+  ✅ Registering NIGHT for dust generation → mn_dust_preprod1w...
+  ✅ Waiting for DUST to generate (this may take 1–2 minutes)
+
+  DUST Balance: 405,083.000000
+  DUST generates continuously over time.
+  Press Enter to re-check, or type "q" to quit.
+```
+
+Press Enter at any time to check your updated balance.
+
+## Project Structure
+
+```
+midnight-dust-generator/
+├── src/
+│   └── index.ts            ← main script
+├── package.json            ← dependencies and start script
+├── proof-server.yml        ← Docker config for proof server
+└── README.md
+```
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| `Cannot find module` errors | Run `npm install`. If it persists, delete `node_modules` and `package-lock.json`, then reinstall. |
+| Connection refused on port 6300 | Start the proof server: `docker compose -f proof-server.yml up` |
+| Proof server hangs | Make sure Docker Desktop is running. On Apple Silicon, switch to Docker VMM in Docker Desktop settings. |
+| Faucet says address is invalid | Copy only the address with no extra spaces. It should start with `mn_addr_preprod1`. |
+| Balance stays at zero after faucet | Wait 30–60 seconds. The wallet polls the network periodically. |
+| DUST stays at zero after registration | Initial generation can take 1–2 minutes. Verify the proof server is running at `http://localhost:6300`. |
+| DUST drops to zero after a failed transaction | Known issue in wallet-sdk-facade 1.0.0. Restart the script to release locked DUST. |
+
+## Restoring a Wallet
+
+Run `npm start` again and choose `r` to restore from a saved seed. The script will sync and show your existing balances.
+
+## License
+
+[Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0)
