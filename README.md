@@ -1,5 +1,7 @@
 # Midnight DUST Generator
 
+This project is built on the [Midnight Network](https://midnight.network).
+
 Generate DUST tokens programmatically on the Midnight Preprod network.
 
 DUST is the non-transferable resource used to pay transaction fees on Midnight. Unlike Testnet-02 where DUST was available directly from the faucet, Preprod requires you to hold tNIGHT tokens and register them for DUST generation — the same flow used on Mainnet.
