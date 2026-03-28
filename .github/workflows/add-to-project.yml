@@ -2,7 +2,7 @@ name: Add to DevRel Issue Tracker
 on:
   issues:
     types: [opened, reopened]
-  pull_request:
+  pull_request_target:
     types: [opened, reopened]
 
 permissions:
