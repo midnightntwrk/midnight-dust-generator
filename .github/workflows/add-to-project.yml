@@ -2,15 +2,17 @@ name: Add to DevRel Issue Tracker
 on:
   issues:
     types: [opened, reopened]
-  pull_request_target:
+  pull_request:
     types: [opened, reopened]
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   add-to-project:
     runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      pull-requests: read
     steps:
       - uses: actions/add-to-project@244f685bbc3b7adfa8466e08b698b5577571133e # v1.0.2
         with:
