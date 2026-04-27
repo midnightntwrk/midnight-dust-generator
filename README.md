@@ -39,8 +39,6 @@ docker compose -f proof-server.yml up
 
 Wait for `listening on: 0.0.0.0:6300` before continuing.
 
-> **Mac ARM (Apple Silicon) users:** If the proof server hangs, open Docker Desktop → Settings → General → Virtual Machine Options → select **Docker VMM**. Restart Docker and try again.
-
 ### 3. Run the script
 
 ```bash
