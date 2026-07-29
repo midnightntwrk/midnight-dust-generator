@@ -396,9 +396,13 @@ const main = async () => {
   const initialState = await Rx.firstValueFrom(wallet.state());
   const networkId = getNetworkId();
 
-  const coinPubKey = ShieldedCoinPublicKey.fromHexString(initialState.shielded.coinPublicKey.toHexString());
-  const encPubKey = ShieldedEncryptionPublicKey.fromHexString(initialState.shielded.encryptionPublicKey.toHexString());
-  const shieldedAddress = MidnightBech32m.encode(networkId, new ShieldedAddress(coinPubKey, encPubKey)).toString();
+  const shieldedAddress = MidnightBech32m.encode(
+    networkId,
+    new ShieldedAddress({
+      coinPublicKey: ShieldedCoinPublicKey.fromHexString(initialState.shielded.coinPublicKey.toHexString()),
+      encryptionPublicKey: ShieldedEncryptionPublicKey.fromHexString(initialState.shielded.encryptionPublicKey.toHexString()),
+    }),
+  ).toString();
   const unshieldedAddress = unshieldedKeystore.getBech32Address();
   const dustAddress = MidnightBech32m.encode(networkId, initialState.dust.address).toString();
 

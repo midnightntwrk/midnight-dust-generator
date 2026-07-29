@@ -9,7 +9,7 @@
     "@midnight-ntwrk/ledger-v8": "^8.0.0",
     "@midnight-ntwrk/midnight-js-network-id": "^4.0.0",
     "@midnight-ntwrk/midnight-js-utils": "^4.0.0",
-    "@midnight-ntwrk/wallet-sdk-address-format": "^3.0.0",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.1.1",
     "@midnight-ntwrk/wallet-sdk-dust-wallet": "^3.0.0",
     "@midnight-ntwrk/wallet-sdk-facade": "^3.0.0",
     "@midnight-ntwrk/wallet-sdk-hd": "^3.0.0",
