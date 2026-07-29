@@ -16,12 +16,15 @@ updates:
 #    cooldown:
 #      default-days: 7
 #
-#  - package-ecosystem: "npm"
-#    directory: "/"
-#    schedule:
-#      interval: "daily"
-#    cooldown:
-#      default-days: 7
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 #
 #  - package-ecosystem: "docker"
 #    directory: "/"
