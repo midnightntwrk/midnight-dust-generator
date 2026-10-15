@@ -1,3 +1,10 @@
+> [!WARNING]
+> **This repository is archived and no longer maintained.**
+>
+> `midnight-dust-generator` walked through registering tNIGHT for DUST generation on Preprod.
+>
+> For maintained, tested examples, use [midnight-examples](https://github.com/midnightntwrk/midnight-examples). This repo is read-only and will not be updated for future SDK releases.
+
 # Midnight DUST Generator
 
 This project is built on the [Midnight Network](https://midnight.network).
